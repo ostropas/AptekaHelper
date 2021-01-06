@@ -12,6 +12,7 @@ namespace DesctopAptekaHelper.Parsers
     public class AprilSiteParser : BaseSiteParser
     {
         protected override string _outPutFileName => "april.csv";
+        public override string Name => "Апрель";
 
         protected override List<Apteka> AddProduct(IWebDriver driver, IdsData data)
         {
@@ -20,10 +21,10 @@ namespace DesctopAptekaHelper.Parsers
             var buyButton = selection.FindElement(By.TagName("button"));
             buyButton.Click();
 
-            Utils.WebWait(() => driver.FindElement(By.ClassName("quantity")));
+            WebWait(() => driver.FindElement(By.ClassName("quantity")));
             driver.Navigate().GoToUrl("https://apteka-april.ru/basket");
 
-            Utils.WebWait(() => driver.FindElement(By.ClassName("quantity")));
+            WebWait(() => driver.FindElement(By.ClassName("quantity")));
 
             var quantity = driver.FindElement(By.ClassName("quantity"));
             var input = quantity.FindElement(By.TagName("input"));
@@ -31,7 +32,7 @@ namespace DesctopAptekaHelper.Parsers
             input.SendKeys(data.Count.ToString());
             input.SendKeys(Keys.Enter);
 
-            Utils.WebWait(() =>
+            WebWait(() =>
             {
                 var selectionList = driver.FindElement(By.ClassName("product-list"));
                 var title = selectionList.FindElement(By.TagName("h1"));
@@ -40,7 +41,7 @@ namespace DesctopAptekaHelper.Parsers
 
             driver.Navigate().GoToUrl("https://apteka-april.ru/checkout");
 
-            Utils.WebWait(() => driver.FindElement(By.ClassName("pharmacy")));
+            WebWait(() => driver.FindElement(By.ClassName("pharmacy")));
 
             var pharmacies = driver.FindElements(By.ClassName("pharmacy"));
 

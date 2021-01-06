@@ -20,5 +20,12 @@
             Id = vals[1];
             Count = vals[2];
         }
+
+        public IdsData(IdsData idsData)
+        {
+            ProductName = idsData.ProductName;
+            Id = idsData.Id;
+            Count = idsData.Count;
+        }
     }
 }

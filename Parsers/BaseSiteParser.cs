@@ -12,7 +12,9 @@ namespace DesctopAptekaHelper
     {
         private List<IdsData> _fileData;
         private string _city;
-        protected virtual string _outPutFileName { get; }
+        protected abstract string _outPutFileName { get; }
+        protected virtual bool _parallel { get; } = false;
+        public abstract string Name { get; }
 
         public void Init(List<string> file, string city)
         {
@@ -21,6 +23,18 @@ namespace DesctopAptekaHelper
         }
 
         public void SaveToFile()
+        {
+            if (_parallel)
+            {
+                SaveParalell();
+            } else
+            {
+                SaveToFileWithDriver();
+            }
+            System.Windows.MessageBox.Show("Complete!");
+        }
+
+        private void SaveToFileWithDriver()
         {
             var driver = InitWebDriver();
             Login(driver);
@@ -34,6 +48,31 @@ namespace DesctopAptekaHelper
             var dataWriter = new DataWriter();
             dataWriter.Write(_outPutFileName, result);
             driver.Quit();
+        }
+
+        private void SaveParalell()
+        {
+            List<Apteka> result = new List<Apteka>();
+            List<Task<List<Apteka>>> tasks = new List<Task<List<Apteka>>>();
+            foreach (var data in _fileData)
+            {
+                var task = new Task<List<Apteka>>(() => AddProduct(null, new IdsData(data)));
+                tasks.Add(task);
+                task.Start();
+            }
+
+            while(tasks.Any(x => !x.IsCompleted))
+            {
+                Thread.Sleep(100);
+            }
+
+            foreach (var item in tasks)
+            {
+                result.AddRange(item.Result);
+            }
+
+            var dataWriter = new DataWriter();
+            dataWriter.Write(_outPutFileName, result);
         }
 
         protected void WebWait(Action predicate)
