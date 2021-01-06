@@ -5,8 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DesctopAptekaHelper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Apteka Helper" Height="350" Width="525">
     <Grid>
-        
+        <TabControl Name="Tabs" HorizontalAlignment="Left" Height="321" Margin="0,0,0,-0.2" VerticalAlignment="Top" Width="518" SelectionChanged="TabControl_SelectionChanged">
+            <TabItem Header="Апрель"/>
+            <TabItem Header="Волгофарм"/>
+        </TabControl>
+      <Frame Name="PagesFrame" HorizontalAlignment="Left" Height="297" VerticalAlignment="Top" Width="518" Margin="0,24,0,-0.2"/>
     </Grid>
 </Window>
