@@ -8,8 +8,9 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="AptekaApril">
 
-        <Grid Background="#FFE5E5E5">
-            <Button Content="Скачать данные" HorizontalAlignment="Left" Margin="184,172,0,0" VerticalAlignment="Top" Width="133" Click="Button_Click" Height="42"/>
-            <Button Content="Выбрать файл" Name="FileButton" HorizontalAlignment="Left" Margin="184,90,0,0" VerticalAlignment="Top" Width="133" Height="38" Click="Button_Click_1"/>
-        </Grid>
+    <Grid Background="#FFE5E5E5">
+        <Button Content="Скачать данные" HorizontalAlignment="Left" Margin="82,168,0,0" VerticalAlignment="Top" Width="235" Click="Button_Click" Height="46"/>
+        <Button Content="Выбрать файл" Name="FileButton" HorizontalAlignment="Left" Margin="82,94,0,0" VerticalAlignment="Top" Width="235" Height="56" Click="Button_Click_1"/>
+        <TextBox HorizontalAlignment="Left" Name="City" Height="39" Margin="82,29,0,0" TextWrapping="Wrap" Text="Волгоград" VerticalAlignment="Top" Width="235"/>
+    </Grid>
 </Page>

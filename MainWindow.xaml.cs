@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DesctopAptekaHelper.Parsers;
+using System.Collections.Generic;
 using System.Windows.Controls;
 
 namespace DesctopAptekaHelper
@@ -12,7 +13,7 @@ namespace DesctopAptekaHelper
         public MainWindow()
         {
             InitializeComponent();
-            _openedPages[0] = new AptekaApril();
+            _openedPages[0] = new AptekaApril(new AprilSiteParser());
             _openedPages[1] = new Volgofarm();
             PagesFrame.Navigate(_openedPages[0]);
             PagesFrame.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;

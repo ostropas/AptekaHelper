@@ -1,6 +1,8 @@
-﻿using OpenQA.Selenium;
+﻿using DesctopAptekaHelper.Parsers;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -14,79 +16,18 @@ namespace DesctopAptekaHelper
     /// </summary>
     public partial class AptekaApril : Page
     {
-        public AptekaApril()
+        BaseSiteParser _parser;
+        private List<string> _file;
+        public AptekaApril(BaseSiteParser parser)
         {
             InitializeComponent();
+            _parser = parser;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            IWebDriver driver = new ChromeDriver();
-            LoginOnSite(driver, "9370886609", "Jd3oQ98P");
-            SelectCity(driver, "Волгоград");
-            AddProductToBasket(driver, "54098-trimedat_tabletki_200mg_30", 5);
-            //driver.Quit();
-        }
-
-        private void LoginOnSite(IWebDriver driver, string user, string password)
-        {
-            driver.Navigate().GoToUrl("https://apteka-april.ru/login");
-            IWebElement number = driver.FindElement(By.ClassName("q-edit-phone"));
-            var input = number.FindElement(By.TagName("input"));
-            input.Click();
-            input.SendKeys(user);
-
-            var passwordField = driver.FindElements(By.ClassName("q-edit"))
-             .Where(x => x.GetProperty("placeholder").ToString()
-             .Contains("Пароль"))
-             .First();
-            passwordField.Click();
-            passwordField.SendKeys(password);
-
-            var enterButton = driver.FindElement(By.ClassName("primary"));
-            enterButton.Click();
-        }
-
-        private void SelectCity(IWebDriver driver, string city)
-        {
-            var selection = driver.FindElement(By.ClassName("c-select-city-desktop"));
-            var button = selection.FindElement(By.TagName("button"));
-            button.Click();
-            var openedSelection = driver.FindElement(By.ClassName("opened"));
-            var inputCity = openedSelection.FindElement(By.TagName("input"));
-            inputCity.SendKeys(city);
-            var firstCity = openedSelection.FindElement(By.ClassName("name"));
-            firstCity.Click();
-        }
-
-        private void AddProductToBasket(IWebDriver driver, string productId, int count)
-        {
-            driver.Navigate().GoToUrl($"https://apteka-april.ru/product/{productId}");
-            var selection = driver.FindElement(By.ClassName("buy"));
-            var buyButton = selection.FindElement(By.TagName("button"));
-            buyButton.Click();
-
-            Utils.WebWait(() => driver.FindElement(By.ClassName("quantity")));
-            driver.Navigate().GoToUrl("https://apteka-april.ru/basket");
-
-            Utils.WebWait(() => driver.FindElement(By.ClassName("quantity")));
-
-            var quantity = driver.FindElement(By.ClassName("quantity"));
-            var input = quantity.FindElement(By.TagName("input"));
-            input.SendKeys(Keys.Backspace);
-            input.SendKeys(count.ToString());
-            input.SendKeys(Keys.Enter);
-
-            Utils.WebWait(() =>
-            {
-                var selectionList = driver.FindElement(By.ClassName("product-list"));
-                var title = selectionList.FindElement(By.TagName("h1"));
-                return title.Text == $"В корзине {count} товаров";
-            });
-
-            driver.Navigate().GoToUrl("https://apteka-april.ru/checkout");
-
-            var pharmacies = driver.FindElements(By.ClassName("pharmacy"));
+            _parser.Init(_file, City.Text);
+            _parser.SaveToFile();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -106,6 +47,7 @@ namespace DesctopAptekaHelper
                 // Open document
                 string filename = dlg.FileName;
                 this.FileButton.Content = $"File:\"{filename}\"";
+                _file = System.IO.File.ReadAllLines(filename).ToList();
             }
         }
     }
