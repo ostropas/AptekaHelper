@@ -27,7 +27,7 @@ namespace DesctopAptekaHelper
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             _parser.Init(_file, City.Text);
-            _parser.SaveToFile();
+            //_parser.SaveToFile();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

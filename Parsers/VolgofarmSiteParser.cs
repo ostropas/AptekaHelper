@@ -5,17 +5,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace DesctopAptekaHelper.Parsers
 {
     public class VolgofarmSiteParser : BaseSiteParser
     {
         private string _siteUrl = "http://volgofarm.ru";
-        protected override string _outPutFileName => "volgofarm.csv";
         public override string Name => "Волгофарм";
         protected override bool _parallel => true;
+        public override bool NeedCity => false;
 
-        protected override List<Apteka> AddProduct(IWebDriver driver, IdsData data)
+        protected override async Task<List<Apteka>> AddProduct(IWebDriver driver, IdsData data)
         {
             var baseAddress = new Uri(_siteUrl);
             var cookieContainer = new CookieContainer();
@@ -25,9 +26,9 @@ namespace DesctopAptekaHelper.Parsers
                 using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
                 {
                     cookieContainer.Add(baseAddress, new System.Net.Cookie($"basket[{data.Id}]", data.Count));
-                    var result = client.GetAsync("/step2.html").Result;
+                    var result = await client.GetAsync("/step2.html");
                     result.EnsureSuccessStatusCode();
-                    res = result.Content.ReadAsStringAsync().Result;
+                    res = await result.Content.ReadAsStringAsync();
                 }
             }
             return Parse(res, data.ProductName);

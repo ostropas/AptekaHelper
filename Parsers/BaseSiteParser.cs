@@ -12,9 +12,11 @@ namespace DesctopAptekaHelper
     {
         private List<IdsData> _fileData;
         private string _city;
-        protected abstract string _outPutFileName { get; }
         protected virtual bool _parallel { get; } = false;
         public abstract string Name { get; }
+        public virtual bool NeedCity { get; } = true;
+
+        public event Action<float> ProgressUpdated;
 
         public void Init(List<string> file, string city)
         {
@@ -22,57 +24,60 @@ namespace DesctopAptekaHelper
             _city = city;
         }
 
-        public void SaveToFile()
+        public async Task SaveToFile()
         {
             if (_parallel)
             {
-                SaveParalell();
+                await SaveParalell();
             } else
             {
-                SaveToFileWithDriver();
+                await SaveToFileWithDriver();
             }
-            System.Windows.MessageBox.Show("Complete!");
         }
 
-        private void SaveToFileWithDriver()
+        private async Task SaveToFileWithDriver()
         {
+            ProgressUpdated.Invoke(0);
             var driver = InitWebDriver();
             Login(driver);
             SetCity(driver, _city);
             List<Apteka> result = new List<Apteka>();
-            foreach (var data in _fileData)
+            for (int i = 0; i < _fileData.Count; i++)
             {
+                var data = _fileData[i];
                 ClearBasket(driver);
-                result.AddRange(AddProduct(driver, data));
+                var res = await AddProduct(driver, data);
+                result.AddRange(res);
+                ProgressUpdated.Invoke((float)(i + 1) / _fileData.Count);
             }
+            ProgressUpdated.Invoke(1);
             var dataWriter = new DataWriter();
-            dataWriter.Write(_outPutFileName, result);
+            dataWriter.Write($"{Name}_{_city}", result);
             driver.Quit();
         }
 
-        private void SaveParalell()
+        private async Task SaveParalell()
         {
+            ProgressUpdated.Invoke(0);
             List<Apteka> result = new List<Apteka>();
             List<Task<List<Apteka>>> tasks = new List<Task<List<Apteka>>>();
             foreach (var data in _fileData)
             {
-                var task = new Task<List<Apteka>>(() => AddProduct(null, new IdsData(data)));
+                var task = new Task<List<Apteka>>(() => AddProduct(null, new IdsData(data)).Result);
                 tasks.Add(task);
                 task.Start();
             }
 
-            while(tasks.Any(x => !x.IsCompleted))
+            var results = await Task.WhenAll(tasks);
+
+            foreach (var item in results)
             {
-                Thread.Sleep(100);
+                result.AddRange(item);
             }
 
-            foreach (var item in tasks)
-            {
-                result.AddRange(item.Result);
-            }
-
+            ProgressUpdated.Invoke(1);
             var dataWriter = new DataWriter();
-            dataWriter.Write(_outPutFileName, result);
+            dataWriter.Write($"{Name}_{_city}", result);
         }
 
         protected void WebWait(Action predicate)
@@ -104,7 +109,7 @@ namespace DesctopAptekaHelper
         protected abstract IWebDriver InitWebDriver();
         protected abstract void Login(IWebDriver driver);
         protected abstract void SetCity(IWebDriver driver, string city);
-        protected abstract List<Apteka> AddProduct(IWebDriver driver, IdsData data);
+        protected virtual async Task<List<Apteka>> AddProduct(IWebDriver driver, IdsData data) => null;
         protected abstract void ClearBasket(IWebDriver driver);
     }
 }

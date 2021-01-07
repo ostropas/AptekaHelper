@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace AptekaHelper
 {
@@ -27,12 +29,27 @@ namespace AptekaHelper
         {
             InitializeComponent();
             _parser = parser;
+            if (!_parser.NeedCity)
+                City.IsEnabled = false;
+            DownLoadButton.IsEnabled = false;
+            _parser.ProgressUpdated += UpdateProgressBar;
+
+        }
+
+        private void UpdateProgressBar(float progress)
+        {
+            var value = progress * 100;
+            Progress.Value = value;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             _parser.Init(_file, City.Text);
-            _parser.SaveToFile();
+
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(async delegate ()
+            {
+                await _parser.SaveToFile();
+            }));
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -53,6 +70,7 @@ namespace AptekaHelper
                 string filename = dlg.FileName;
                 this.FileButton.Content = $"File:\"{filename}\"";
                 _file = System.IO.File.ReadAllLines(filename).ToList();
+                DownLoadButton.IsEnabled = true;
             }
         }
     }

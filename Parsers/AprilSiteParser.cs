@@ -11,10 +11,16 @@ namespace DesctopAptekaHelper.Parsers
 {
     public class AprilSiteParser : BaseSiteParser
     {
-        protected override string _outPutFileName => "april.csv";
         public override string Name => "Апрель";
 
-        protected override List<Apteka> AddProduct(IWebDriver driver, IdsData data)
+        protected override async Task<List<Apteka>> AddProduct(IWebDriver driver, IdsData data)
+        {
+            var task = new Task<List<Apteka>>(() => FindProduct(driver, data));
+            task.Start();
+            return await task;
+        }
+
+        private List<Apteka> FindProduct(IWebDriver driver, IdsData data)
         {
             driver.Navigate().GoToUrl($"https://apteka-april.ru/product/{data.Id}");
             var selection = driver.FindElement(By.ClassName("buy"));
@@ -68,6 +74,8 @@ namespace DesctopAptekaHelper.Parsers
 
                 return new Apteka(data.ProductName, "Апрель", address, countLeft.ToString());
             }).ToList();
+
+
             return res;
         }
 
