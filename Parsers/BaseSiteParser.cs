@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -24,24 +25,25 @@ namespace DesctopAptekaHelper
             _city = city;
         }
 
-        public async Task SaveToFile()
+        public async Task SaveToFile(Stopwatch sw)
         {
             if (_parallel)
             {
                 await SaveParalell();
             } else
             {
-                await SaveToFileWithDriver();
+                await SaveToFileWithDriver(sw);
             }
         }
 
-        private async Task SaveToFileWithDriver()
+        private async Task SaveToFileWithDriver(Stopwatch sw)
         {
             ProgressUpdated.Invoke(0);
             var driver = InitWebDriver();
             Login(driver);
             SetCity(driver, _city);
             List<Apteka> result = new List<Apteka>();
+            sw.Restart();
             for (int i = 0; i < _fileData.Count; i++)
             {
                 var data = _fileData[i];

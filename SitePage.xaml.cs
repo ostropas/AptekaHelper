@@ -1,19 +1,10 @@
 ﻿using DesctopAptekaHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace AptekaHelper
@@ -23,32 +14,55 @@ namespace AptekaHelper
     /// </summary>
     public partial class SitePage : Page
     {
+        private float _avrIterationTime;
+        private Stopwatch _sw = new Stopwatch();
+        private Stopwatch _allTime = new Stopwatch();
         BaseSiteParser _parser;
-        private List<string> _file;
-        public SitePage(BaseSiteParser parser)
+        private List<string> _file = new List<string>();
+        public SitePage(BaseSiteParser parser, Action<bool> blockAct = null)
         {
             InitializeComponent();
             _parser = parser;
-            if (!_parser.NeedCity)
-                City.IsEnabled = false;
-            DownLoadButton.IsEnabled = false;
             _parser.ProgressUpdated += UpdateProgressBar;
+            //Block += BlockElements;
+            //BlockElements(false);
+            //Block += blockAct;
+        }
 
+        private void BlockElements(bool blocked)
+        {
+            DownLoadButton.IsEnabled = !blocked && _file.Count > 0;
+            City.IsEnabled = !blocked && _parser.NeedCity;
+            FileButton.IsEnabled = !blocked;
         }
 
         private void UpdateProgressBar(float progress)
         {
+            _sw.Stop();
+            if (_avrIterationTime == 0)
+            {
+                _avrIterationTime = _sw.ElapsedMilliseconds / 1000;
+            }
+            _sw.Restart();
+            var avrTime = _avrIterationTime * _file.Count;
             var value = progress * 100;
             Progress.Value = value;
+            ProgressText.Content = $"P:{Math.Round(value, 0)}, S:{_allTime.ElapsedMilliseconds / 1000}, R:{avrTime}";
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             _parser.Init(_file, City.Text);
+            _sw.Start();
+            _allTime.Start();
+
+            _avrIterationTime = 0;
 
             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(async delegate ()
             {
-                await _parser.SaveToFile();
+                await _parser.SaveToFile(_sw);
+                _sw.Reset();
+                _allTime.Reset();
             }));
         }
 

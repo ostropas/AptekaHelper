@@ -30,7 +30,7 @@ namespace DesctopAptekaHelper
 
             for (int i = 0; i < _parsers.Count; i++)
             {
-                _openedPages.Add(i, new SitePage(_parsers[i]));
+                _openedPages.Add(i, new SitePage(_parsers[i], BlockElements));
             }
             PagesFrame.Navigate(_openedPages[0]);
             PagesFrame.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
@@ -40,6 +40,15 @@ namespace DesctopAptekaHelper
         {
             int selectIndex = Tabs.SelectedIndex;
             PagesFrame.Navigate(_openedPages[selectIndex]);
+        }
+
+        private void BlockElements(bool blocked)
+        {
+            foreach (var tab in Tabs.Items)
+            {
+                var t = tab as TabItem;
+                t.IsEnabled = !blocked;
+            }
         }
     }
 }

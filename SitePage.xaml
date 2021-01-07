@@ -12,6 +12,7 @@
         <Button Content="Скачать данные" Name="DownLoadButton" HorizontalAlignment="Left" Margin="82,168,0,0" VerticalAlignment="Top" Width="235" Click="Button_Click" Height="46"/>
         <Button Content="Выбрать файл" Name="FileButton" HorizontalAlignment="Left" Margin="82,94,0,0" VerticalAlignment="Top" Width="235" Height="56" Click="Button_Click_1"/>
         <TextBox HorizontalAlignment="Left" Name="City" Height="39" Margin="82,29,0,0" TextWrapping="Wrap" Text="Волгоград" VerticalAlignment="Top" Width="235"/>
-        <ProgressBar Minimum="0" Maximum="100" Name="Progress" HorizontalAlignment="Left" Height="28" VerticalAlignment="Top" Width="235" Margin="82,243,0,0"/>
+        <ProgressBar Name="Progress" HorizontalAlignment="Left" Height="28" VerticalAlignment="Top" Width="235" Margin="82,242,0,0"/>
+        <Label Content="0" Name="ProgressText" HorizontalAlignment="Left" Margin="0,214,0,0" VerticalAlignment="Top" Height="28" Width="421"/>
     </Grid>
 </Page>
