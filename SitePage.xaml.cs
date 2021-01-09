@@ -47,7 +47,9 @@ namespace AptekaHelper
             var avrTime = _avrIterationTime * _file.Count;
             var value = progress * 100;
             Progress.Value = value;
-            ProgressText.Content = $"P:{Math.Round(value, 0)}, S:{_allTime.ElapsedMilliseconds / 1000}, R:{avrTime}";
+            int seconds = (int)(avrTime - _allTime.ElapsedMilliseconds / 1000);
+            var time = new TimeSpan(0, 0, seconds);
+            ProgressText.Content = $"{Math.Round(value, 0)}%, Time left: {time.ToString()}";
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -82,8 +84,8 @@ namespace AptekaHelper
             {
                 // Open document
                 string filename = dlg.FileName;
-                this.FileButton.Content = $"File:\"{filename}\"";
-                _file = System.IO.File.ReadAllLines(filename).ToList();
+                this.FileButton.Content = $"File:\"{filename}\"";                
+                _file = System.IO.File.ReadAllLines(filename).Where(x => !string.IsNullOrEmpty(x)).ToList();
                 DownLoadButton.IsEnabled = true;
             }
         }

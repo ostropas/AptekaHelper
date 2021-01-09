@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using AptekaHelper.Extensions;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections.Generic;
@@ -23,16 +24,23 @@ namespace DesctopAptekaHelper.Parsers
         private List<Apteka> FindProduct(IWebDriver driver, IdsData data)
         {
             driver.Navigate().GoToUrl($"https://apteka-april.ru/product/{data.Id}");
+
+            WebWait(() => driver.ElementExist(By.ClassName("no-product-in-city")), 20);
+
+            if (driver.ElementExist(By.ClassName("no-product-in-city")))
+                return new List<Apteka>();
+
             var selection = driver.FindElement(By.ClassName("buy"));
             var buyButton = selection.FindElement(By.TagName("button"));
             buyButton.Click();
 
-            WebWait(() => driver.FindElement(By.ClassName("quantity")));
+            WebWaitElement(driver, By.ClassName("quantity"));
+
             driver.Navigate().GoToUrl("https://apteka-april.ru/basket");
 
-            WebWait(() => driver.FindElement(By.ClassName("quantity")));
 
-            var quantity = driver.FindElement(By.ClassName("quantity"));
+            var quantity = WebWaitElement(driver, By.ClassName("quantity"));
+
             var input = quantity.FindElement(By.TagName("input"));
             input.SendKeys(Keys.Backspace);
             input.SendKeys(data.Count.ToString());
@@ -47,7 +55,7 @@ namespace DesctopAptekaHelper.Parsers
 
             driver.Navigate().GoToUrl("https://apteka-april.ru/checkout");
 
-            WebWait(() => driver.FindElement(By.ClassName("pharmacy")));
+            WebWaitElement(driver, By.ClassName("pharmacy"));
 
             var pharmacies = driver.FindElements(By.ClassName("pharmacy"));
 
@@ -85,6 +93,12 @@ namespace DesctopAptekaHelper.Parsers
             {
                 var badge = driver.FindElement(By.ClassName("q-badge"));
                 driver.Navigate().GoToUrl("https://apteka-april.ru/basket");
+                WebWait(() =>
+                {
+                    return driver.ElementExist(By.ClassName("no-basket-items")) || driver.ElementExist(By.ClassName("c-basket-summary"));
+                });
+                if (driver.ElementExist(By.ClassName("no-basket-items")))
+                    return;
                 WebWait(() => driver.FindElement(By.ClassName("c-basket-summary")));
                 var selection = driver.FindElement(By.ClassName("c-basket-summary"));
                 var li = selection.FindElements(By.TagName("li")).ElementAt(1);
@@ -96,9 +110,8 @@ namespace DesctopAptekaHelper.Parsers
                     return h1.Text == "В корзине нет товаров";
                 });
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                var m = 0;
             }
         }
 
@@ -113,6 +126,7 @@ namespace DesctopAptekaHelper.Parsers
             driver.Navigate().GoToUrl("https://apteka-april.ru/login");
             IWebElement number = driver.FindElement(By.ClassName("q-edit-phone"));
             var input = number.FindElement(By.TagName("input"));
+            WebWait(() => input.Displayed);
             input.Click();
             input.SendKeys("9370886609");
 
@@ -120,10 +134,12 @@ namespace DesctopAptekaHelper.Parsers
              .Where(x => x.GetProperty("placeholder").ToString()
              .Contains("Пароль"))
              .First();
+            WebWait(() => passwordField.Displayed);
             passwordField.Click();
             passwordField.SendKeys("Jd3oQ98P");
 
             var enterButton = driver.FindElement(By.ClassName("primary"));
+            WebWait(() => enterButton.Displayed);
             enterButton.Click();
         }
 
@@ -131,12 +147,21 @@ namespace DesctopAptekaHelper.Parsers
         {
             var selection = driver.FindElement(By.ClassName("c-select-city-desktop"));
             var button = selection.FindElement(By.TagName("button"));
+            Thread.Sleep(1000);
             button.Click();
             var openedSelection = driver.FindElement(By.ClassName("opened"));
             var inputCity = openedSelection.FindElement(By.TagName("input"));
+            WebWait(() => inputCity.Displayed);
             inputCity.SendKeys(city);
-            var firstCity = openedSelection.FindElement(By.ClassName("name"));
-            firstCity.Click();
+            WebWait(() =>
+            {
+                var firstCity = openedSelection.FindElement(By.ClassName("name"));
+                return city == firstCity.Text;
+            });
+            var cityElement = openedSelection.FindElement(By.ClassName("name"));
+            WebWait(() => cityElement.Displayed);
+            cityElement.Click();
+            Thread.Sleep(1000);
         }
     }
 }

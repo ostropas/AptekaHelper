@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using AptekaHelper.Extensions;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -82,18 +83,28 @@ namespace DesctopAptekaHelper
             dataWriter.Write($"{Name}_{_city}", result);
         }
 
-        protected void WebWait(Action predicate)
+        protected void WebWait(Action predicate, int times = 100)
         {
             WebWait(() =>
             {
                 predicate.Invoke();
                 return true;
-            });
+            }, times);
         }
 
-        protected void WebWait(Func<bool> predicate)
+        protected IWebElement WebWaitElement(ISearchContext context, By by)
+        {
+            while (!context.ElementExist(by))
+            {
+                Thread.Sleep(100);
+            }
+            return context.FindElement(by);
+        }
+
+        protected void WebWait(Func<bool> predicate, int times = 100)
         {
             bool ready;
+            int timesCount = 0;
             do
             {
                 Thread.Sleep(100);
@@ -105,13 +116,16 @@ namespace DesctopAptekaHelper
                 {
                     ready = false;
                 }
+
+                if (timesCount++ > times)
+                    return;
             } while (!ready);
         }
 
         protected abstract IWebDriver InitWebDriver();
         protected abstract void Login(IWebDriver driver);
         protected abstract void SetCity(IWebDriver driver, string city);
-        protected virtual async Task<List<Apteka>> AddProduct(IWebDriver driver, IdsData data) => null;
+        protected abstract Task<List<Apteka>> AddProduct(IWebDriver driver, IdsData data);
         protected abstract void ClearBasket(IWebDriver driver);
     }
 }
