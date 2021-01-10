@@ -1,6 +1,7 @@
 ﻿using AptekaHelper.Extensions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -117,7 +118,12 @@ namespace DesctopAptekaHelper.Parsers
 
         protected override IWebDriver InitWebDriver()
         {
-            IWebDriver driver = new ChromeDriver();
+            ChromeOptions options = new ChromeOptions();
+            options.AddArguments("--window-size=1920,1080");
+            options.AddArguments("--start-maximized");
+            options.AddArguments("--headless");
+
+            IWebDriver driver = new ChromeDriver(options);
             return driver;
         }
 
@@ -146,9 +152,12 @@ namespace DesctopAptekaHelper.Parsers
         protected override void SetCity(IWebDriver driver, string city)
         {
             var selection = driver.FindElement(By.ClassName("c-select-city-desktop"));
-            var button = selection.FindElement(By.TagName("button"));
-            Thread.Sleep(1000);
+
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            //var button = selection.FindElement(By.TagName("button"));
+            var button = wait.Until(drv => drv.FindElement(By.TagName("button")));
             button.Click();
+
             var openedSelection = driver.FindElement(By.ClassName("opened"));
             var inputCity = openedSelection.FindElement(By.TagName("input"));
             WebWait(() => inputCity.Displayed);
