@@ -62,10 +62,19 @@ namespace AptekaHelper
 
             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(async delegate ()
             {
-                var res = await _parser.ParseSite(_sw);
-                _parser.WriteToFile(res);
-                _sw.Reset();
-                _allTime.Reset();
+                try
+                {
+                    var res = await _parser.ParseSite(_sw);
+                    _parser.WriteToFile(res);
+                    _sw.Reset();
+                    _allTime.Reset();
+                }
+                catch (Exception exception)
+                {
+                    Logger.Logger.Log(exception.ToString());
+                    if (_parser is IDisposable di)
+                        di.Dispose();
+                }
             }));
         }
 

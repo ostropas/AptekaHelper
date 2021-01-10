@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AptekaHelper.Parsers
 {
-    public abstract class SeleniumSiteParser : BaseSiteParser
+    public abstract class SeleniumSiteParser : BaseSiteParser, IDisposable
     {
         protected IWebDriver _webDriver;
 
@@ -26,6 +26,12 @@ namespace AptekaHelper.Parsers
         protected void CloseWebDriver()
         {
             _webDriver.Quit();
+        }
+
+        public void Dispose()
+        {
+            if (_webDriver != null)
+                _webDriver.Quit();
         }
     }
 }
