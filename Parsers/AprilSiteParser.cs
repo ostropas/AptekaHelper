@@ -28,39 +28,35 @@ namespace AptekaHelper.Parsers
         {
             driver.Navigate().GoToUrl(GetAbsolutePath($"product/{data.Id}"));
 
-            WebWait(() => driver.ElementExist(By.ClassName("no-product-in-city")), 20);
-
-            if (driver.ElementExist(By.ClassName("no-product-in-city")))
+            if (driver.WaitElement(By.ClassName("no-product-in-city"), 1))
                 return new List<Apteka>();
 
             var selection = driver.FindElement(By.ClassName("buy"));
             var buyButton = selection.FindElement(By.TagName("button"));
             buyButton.Click();
 
-            WebWaitElement(driver, By.ClassName("quantity"));
+            driver.WaitElement(By.ClassName("quantity"), 10);
 
             driver.Navigate().GoToUrl(GetAbsolutePath("basket"));
 
 
-            var quantity = WebWaitElement(driver, By.ClassName("quantity"));
+            var quantity = driver.FindElement(By.ClassName("quantity"), 10);
 
             var input = quantity.FindElement(By.TagName("input"));
             input.SendKeys(Keys.Backspace);
             input.SendKeys(data.Count.ToString());
             input.SendKeys(Keys.Enter);
 
-            WebWait(() =>
+            driver.WaitCondition(drv => 
             {
                 var selectionList = driver.FindElement(By.ClassName("product-list"));
                 var title = selectionList.FindElement(By.TagName("h1"));
-                return title.Text == $"В корзине {data.Count} товаров";
-            });
+                return ExpectedConditions.TextToBePresentInElement(title, $"В корзине {data.Count} товаров");
+            }, 10);
 
             driver.Navigate().GoToUrl(GetAbsolutePath("checkout"));
 
-            WebWaitElement(driver, By.ClassName("pharmacy"));
-
-            var pharmacies = driver.FindElements(By.ClassName("pharmacy"));
+            var pharmacies = driver.FindElements(By.ClassName("pharmacy"), 10);
 
             List<Apteka> res = pharmacies.Select(x =>
             {
@@ -96,22 +92,21 @@ namespace AptekaHelper.Parsers
             {
                 var badge = driver.FindElement(By.ClassName("q-badge"));
                 driver.Navigate().GoToUrl(GetAbsolutePath("basket"));
-                WebWait(() =>
-                {
-                    return driver.ElementExist(By.ClassName("no-basket-items")) || driver.ElementExist(By.ClassName("c-basket-summary"));
-                });
+
+                driver.WaitCondition(ExpectedConditions.ElementExists(By.ClassName("no-basket-items")), 10);
                 if (driver.ElementExist(By.ClassName("no-basket-items")))
                     return;
-                WebWait(() => driver.FindElement(By.ClassName("c-basket-summary")));
-                var selection = driver.FindElement(By.ClassName("c-basket-summary"));
+
+                var selection = driver.FindElement(By.ClassName("c-basket-summary"), 10);
                 var li = selection.FindElements(By.TagName("li")).ElementAt(1);
                 li.Click();
-                WebWait(() =>
+
+                driver.WaitCondition(drv =>
                 {
                     var selectionElements = driver.FindElement(By.ClassName("product-list"));
                     var h1 = selectionElements.FindElement(By.TagName("h1"));
-                    return h1.Text == "В корзине нет товаров";
-                });
+                    return ExpectedConditions.TextToBePresentInElement(h1, "В корзине нет товаров");
+                }, 10);
             }
             catch (Exception)
             {
@@ -123,7 +118,6 @@ namespace AptekaHelper.Parsers
             driver.Navigate().GoToUrl(GetAbsolutePath("login"));
             IWebElement number = driver.FindElement(By.ClassName("q-edit-phone"));
             var input = number.FindElement(By.TagName("input"));
-            WebWait(() => input.Displayed);
             input.Click();
             input.SendKeys("9370886609");
 
@@ -131,12 +125,10 @@ namespace AptekaHelper.Parsers
              .Where(x => x.GetProperty("placeholder").ToString()
              .Contains("Пароль"))
              .First();
-            WebWait(() => passwordField.Displayed);
             passwordField.Click();
             passwordField.SendKeys("Jd3oQ98P");
 
             var enterButton = driver.FindElement(By.ClassName("primary"));
-            WebWait(() => enterButton.Displayed);
             enterButton.Click();
         }
 
@@ -146,19 +138,19 @@ namespace AptekaHelper.Parsers
 
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
             var button = wait.Until(drv => drv.FindElement(By.TagName("button")));
+            driver.WaitToBeClickable(button);
             button.Click();
 
             var openedSelection = driver.FindElement(By.ClassName("opened"));
             var inputCity = openedSelection.FindElement(By.TagName("input"));
-            WebWait(() => inputCity.Displayed);
             inputCity.SendKeys(city);
-            WebWait(() =>
+            driver.WaitCondition(drv =>
             {
                 var firstCity = openedSelection.FindElement(By.ClassName("name"));
-                return city == firstCity.Text;
-            });
+                return ExpectedConditions.TextToBePresentInElement(firstCity, city);
+            }, 10);
             var cityElement = openedSelection.FindElement(By.ClassName("name"));
-            WebWait(() => cityElement.Displayed);
+            driver.WaitToBeClickable(cityElement);
             cityElement.Click();
             Thread.Sleep(1000);
         }

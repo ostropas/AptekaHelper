@@ -35,45 +35,6 @@ namespace AptekaHelper
             return result;
         }
 
-        protected void WebWait(Action predicate, int times = 100)
-        {
-            WebWait(() =>
-            {
-                predicate.Invoke();
-                return true;
-            }, times);
-        }
-
-        protected IWebElement WebWaitElement(ISearchContext context, By by)
-        {
-            while (!context.ElementExist(by))
-            {
-                Thread.Sleep(100);
-            }
-            return context.FindElement(by);
-        }
-
-        protected void WebWait(Func<bool> predicate, int times = 100)
-        {
-            bool ready;
-            int timesCount = 0;
-            do
-            {
-                Thread.Sleep(100);
-                try
-                {
-                    ready = predicate.Invoke();
-                }
-                catch
-                {
-                    ready = false;
-                }
-
-                if (timesCount++ > times)
-                    return;
-            } while (!ready);
-        }
-
         protected virtual void Login(IWebDriver driver) { }
         protected abstract void SetCity(IWebDriver driver, string city);
         protected abstract Task<List<Apteka>> AddProduct(IWebDriver driver, IdsData data);
