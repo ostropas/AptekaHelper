@@ -1,4 +1,5 @@
-﻿using CsQuery;
+﻿using AptekaHelper.Parsers;
+using CsQuery;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -7,16 +8,15 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace DesctopAptekaHelper.Parsers
+namespace AptekaHelper.Parsers
 {
-    public class VolgofarmSiteParser : BaseSiteParser
+    public class VolgofarmSiteParser : ClassicSiteParser
     {
-        private string _siteUrl = "http://volgofarm.ru";
         public override string Name => "Волгофарм";
-        protected override bool _parallel => true;
-        public override bool NeedCity => false;
 
-        protected override async Task<List<Apteka>> AddProduct(IWebDriver driver, IdsData data)
+        protected override string _siteUrl => "http://volgofarm.ru";
+
+        protected override async Task<List<Apteka>> AddProduct(IdsData data)
         {
             var baseAddress = new Uri(_siteUrl);
             var cookieContainer = new CookieContainer();
@@ -60,67 +60,6 @@ namespace DesctopAptekaHelper.Parsers
             }
 
             return content;
-        }
-
-        protected override void ClearBasket(IWebDriver driver)
-        {
-            //try
-            //{
-            //    var badge = driver.FindElement(By.ClassName("q-badge"));
-            //    driver.Navigate().GoToUrl("https://apteka-april.ru/basket");
-            //    WebWait(() => driver.FindElement(By.ClassName("c-basket-summary")));
-            //    var selection = driver.FindElement(By.ClassName("c-basket-summary"));
-            //    var li = selection.FindElements(By.TagName("li")).ElementAt(1);
-            //    li.Click();
-            //    WebWait(() =>
-            //    {
-            //        var selectionElements = driver.FindElement(By.ClassName("product-list"));
-            //        var h1 = selectionElements.FindElement(By.TagName("h1"));
-            //        return h1.Text == "В корзине нет товаров";
-            //    });
-            //}
-            //catch (Exception e)
-            //{
-            //    var m = 0;
-            //}
-        }
-
-        protected override IWebDriver InitWebDriver()
-        {
-            return null;
-            //IWebDriver driver = new ChromeDriver();
-            //return driver;
-        }
-
-        protected override void Login(IWebDriver driver)
-        {
-            //driver.Navigate().GoToUrl("https://apteka-april.ru/login");
-            //IWebElement number = driver.FindElement(By.ClassName("q-edit-phone"));
-            //var input = number.FindElement(By.TagName("input"));
-            //input.Click();
-            //input.SendKeys("9370886609");
-
-            //var passwordField = driver.FindElements(By.ClassName("q-edit"))
-            // .Where(x => x.GetProperty("placeholder").ToString()
-            // .Contains("Пароль"))
-            // .First();
-            //passwordField.Click();
-            //passwordField.SendKeys("Jd3oQ98P");
-
-            //var enterButton = driver.FindElement(By.ClassName("primary"));
-            //enterButton.Click();
-        }
-
-        protected override void SetCity(IWebDriver driver, string city)
-        {
-            //var selection = driver.FindElement(By.ClassName("c-select-city-desktop"));
-            //var button = selection.FindElement(By.TagName("button"));
-            //button.Click();
-            //var openedSelection = driver.FindElement(By.ClassName("opened"));
-            //var inputCity = openedSelection.FindElement(By.TagName("input"));
-            //inputCity.SendKeys(city);
-            //var firstCity = openedSelection.FindElement(By.ClassName("name"));
-            //firstCity.Click();
         }
     }
 }

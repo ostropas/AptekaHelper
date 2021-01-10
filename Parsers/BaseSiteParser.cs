@@ -1,24 +1,21 @@
-﻿using AptekaHelper.Extensions;
-using OpenQA.Selenium;
+﻿using AptekaHelper;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace DesctopAptekaHelper
+namespace AptekaHelper.Parsers
 {
     public abstract class BaseSiteParser
     {
-        private List<IdsData> _fileData;
-        private string _city;
-        protected virtual bool _parallel { get; } = false;
+        public abstract Task<List<Apteka>> ParseSite(Stopwatch sw);
         public abstract string Name { get; }
-        public virtual bool NeedCity { get; } = true;
-
         public event Action<float> ProgressUpdated;
+        protected abstract string _siteUrl { get; }
+
+        protected List<IdsData> _fileData;
+        protected string _city;
 
         public void Init(List<string> file, string city)
         {
@@ -26,106 +23,14 @@ namespace DesctopAptekaHelper
             _city = city;
         }
 
-        public async Task SaveToFile(Stopwatch sw)
+        protected string GetAbsolutePath(string relPath) => $"{_siteUrl}/{relPath}";
+
+        public void WriteToFile(List<Apteka> result)
         {
-            if (_parallel)
-            {
-                await SaveParalell();
-            } else
-            {
-                await SaveToFileWithDriver(sw);
-            }
-        }
-
-        private async Task SaveToFileWithDriver(Stopwatch sw)
-        {
-            ProgressUpdated.Invoke(0);
-            var driver = InitWebDriver();
-            Login(driver);
-            SetCity(driver, _city);
-            List<Apteka> result = new List<Apteka>();
-            sw.Restart();
-            for (int i = 0; i < _fileData.Count; i++)
-            {
-                var data = _fileData[i];
-                ClearBasket(driver);
-                var res = await AddProduct(driver, data);
-                result.AddRange(res);
-                ProgressUpdated.Invoke((float)(i + 1) / _fileData.Count);
-            }
-            ProgressUpdated.Invoke(1);
-            var dataWriter = new DataWriter();
-            dataWriter.Write($"{Name}_{_city}", result);
-            driver.Quit();
-        }
-
-        private async Task SaveParalell()
-        {
-            ProgressUpdated.Invoke(0);
-            List<Apteka> result = new List<Apteka>();
-            List<Task<List<Apteka>>> tasks = new List<Task<List<Apteka>>>();
-            foreach (var data in _fileData)
-            {
-                var task = new Task<List<Apteka>>(() => AddProduct(null, new IdsData(data)).Result);
-                tasks.Add(task);
-                task.Start();
-            }
-
-            var results = await Task.WhenAll(tasks);
-
-            foreach (var item in results)
-            {
-                result.AddRange(item);
-            }
-
-            ProgressUpdated.Invoke(1);
             var dataWriter = new DataWriter();
             dataWriter.Write($"{Name}_{_city}", result);
         }
 
-        protected void WebWait(Action predicate, int times = 100)
-        {
-            WebWait(() =>
-            {
-                predicate.Invoke();
-                return true;
-            }, times);
-        }
-
-        protected IWebElement WebWaitElement(ISearchContext context, By by)
-        {
-            while (!context.ElementExist(by))
-            {
-                Thread.Sleep(100);
-            }
-            return context.FindElement(by);
-        }
-
-        protected void WebWait(Func<bool> predicate, int times = 100)
-        {
-            bool ready;
-            int timesCount = 0;
-            do
-            {
-                Thread.Sleep(100);
-                try
-                {
-                    ready = predicate.Invoke();
-                }
-                catch
-                {
-                    ready = false;
-                }
-
-                if (timesCount++ > times)
-                    return;
-            } while (!ready);
-        }
-
-        protected abstract IWebDriver InitWebDriver();
-        protected abstract void Login(IWebDriver driver);
-        protected abstract void SetCity(IWebDriver driver, string city);
-        protected abstract Task<List<Apteka>> AddProduct(IWebDriver driver, IdsData data);
-        protected abstract void ClearBasket(IWebDriver driver);
+        protected void UpdateProgress(float progress) => ProgressUpdated?.Invoke(progress);
     }
 }

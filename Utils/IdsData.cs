@@ -1,4 +1,4 @@
-﻿namespace DesctopAptekaHelper
+﻿namespace AptekaHelper
 {
     public class IdsData
     {

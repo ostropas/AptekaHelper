@@ -1,4 +1,4 @@
-﻿namespace DesctopAptekaHelper
+﻿namespace AptekaHelper
 {
     /// <summary>
     /// Interaction logic for App.xaml

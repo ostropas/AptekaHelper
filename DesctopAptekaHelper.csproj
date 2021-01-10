@@ -102,10 +102,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Extensions\ISearchElementExtensions.cs" />
+    <Compile Include="Parsers\BaseSiteParser.cs" />
+    <Compile Include="Parsers\ClassicSiteParser.cs" />
+    <Compile Include="Parsers\SeleniumSiteParser.cs" />
     <Compile Include="Utils\Apteka.cs" />
     <Compile Include="Parsers\VolgofarmSiteParser.cs" />
     <Compile Include="Parsers\AprilSiteParser.cs" />
-    <Compile Include="Parsers\BaseSiteParser.cs" />
+    <Compile Include="Parsers\SeleniumLongSiteParser.cs" />
     <Compile Include="Utils\DataWriter.cs" />
     <Compile Include="Utils\IdsData.cs" />
     <Compile Include="SitePage.xaml.cs">

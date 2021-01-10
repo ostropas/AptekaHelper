@@ -1,6 +1,6 @@
 ﻿using CsvHelper.Configuration.Attributes;
 
-namespace DesctopAptekaHelper
+namespace AptekaHelper
 {
     public class Apteka
     {

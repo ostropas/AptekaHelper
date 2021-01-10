@@ -1,4 +1,4 @@
-﻿using DesctopAptekaHelper;
+﻿using AptekaHelper.Parsers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,9 +31,9 @@ namespace AptekaHelper
 
         private void BlockElements(bool blocked)
         {
-            DownLoadButton.IsEnabled = !blocked && _file.Count > 0;
-            City.IsEnabled = !blocked && _parser.NeedCity;
-            FileButton.IsEnabled = !blocked;
+            //DownLoadButton.IsEnabled = !blocked && _file.Count > 0;
+            //City.IsEnabled = !blocked && _parser.NeedCity;
+            //FileButton.IsEnabled = !blocked;
         }
 
         private void UpdateProgressBar(float progress)
@@ -62,7 +62,8 @@ namespace AptekaHelper
 
             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(async delegate ()
             {
-                await _parser.SaveToFile(_sw);
+                var res = await _parser.ParseSite(_sw);
+                _parser.WriteToFile(res);
                 _sw.Reset();
                 _allTime.Reset();
             }));
@@ -73,7 +74,6 @@ namespace AptekaHelper
 
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.FileName = "Document"; // Default file name
-            //dlg.DefaultExt = ".txt"; // Default file extension
             dlg.Filter = "Text documents (.txt)|*.txt"; // Filter files by extension
 
             // Show open file dialog box

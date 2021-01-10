@@ -1,10 +1,9 @@
-﻿using AptekaHelper;
-using DesctopAptekaHelper.Parsers;
+﻿using AptekaHelper.Parsers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 
-namespace DesctopAptekaHelper
+namespace AptekaHelper
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

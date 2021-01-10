@@ -9,11 +9,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DesctopAptekaHelper.Parsers
+namespace AptekaHelper.Parsers
 {
-    public class AprilSiteParser : BaseSiteParser
+    public class AprilSiteParser : SeleniumLongSiteParser
     {
         public override string Name => "Апрель";
+
+        protected override string _siteUrl => "https://apteka-april.ru";
 
         protected override async Task<List<Apteka>> AddProduct(IWebDriver driver, IdsData data)
         {
@@ -24,7 +26,7 @@ namespace DesctopAptekaHelper.Parsers
 
         private List<Apteka> FindProduct(IWebDriver driver, IdsData data)
         {
-            driver.Navigate().GoToUrl($"https://apteka-april.ru/product/{data.Id}");
+            driver.Navigate().GoToUrl(GetAbsolutePath($"product/{data.Id}"));
 
             WebWait(() => driver.ElementExist(By.ClassName("no-product-in-city")), 20);
 
@@ -37,7 +39,7 @@ namespace DesctopAptekaHelper.Parsers
 
             WebWaitElement(driver, By.ClassName("quantity"));
 
-            driver.Navigate().GoToUrl("https://apteka-april.ru/basket");
+            driver.Navigate().GoToUrl(GetAbsolutePath("basket"));
 
 
             var quantity = WebWaitElement(driver, By.ClassName("quantity"));
@@ -54,7 +56,7 @@ namespace DesctopAptekaHelper.Parsers
                 return title.Text == $"В корзине {data.Count} товаров";
             });
 
-            driver.Navigate().GoToUrl("https://apteka-april.ru/checkout");
+            driver.Navigate().GoToUrl(GetAbsolutePath("checkout"));
 
             WebWaitElement(driver, By.ClassName("pharmacy"));
 
@@ -93,7 +95,7 @@ namespace DesctopAptekaHelper.Parsers
             try
             {
                 var badge = driver.FindElement(By.ClassName("q-badge"));
-                driver.Navigate().GoToUrl("https://apteka-april.ru/basket");
+                driver.Navigate().GoToUrl(GetAbsolutePath("basket"));
                 WebWait(() =>
                 {
                     return driver.ElementExist(By.ClassName("no-basket-items")) || driver.ElementExist(By.ClassName("c-basket-summary"));
@@ -116,20 +118,9 @@ namespace DesctopAptekaHelper.Parsers
             }
         }
 
-        protected override IWebDriver InitWebDriver()
-        {
-            ChromeOptions options = new ChromeOptions();
-            options.AddArguments("--window-size=1920,1080");
-            options.AddArguments("--start-maximized");
-            options.AddArguments("--headless");
-
-            IWebDriver driver = new ChromeDriver(options);
-            return driver;
-        }
-
         protected override void Login(IWebDriver driver)
         {
-            driver.Navigate().GoToUrl("https://apteka-april.ru/login");
+            driver.Navigate().GoToUrl(GetAbsolutePath("login"));
             IWebElement number = driver.FindElement(By.ClassName("q-edit-phone"));
             var input = number.FindElement(By.TagName("input"));
             WebWait(() => input.Displayed);
@@ -154,7 +145,6 @@ namespace DesctopAptekaHelper.Parsers
             var selection = driver.FindElement(By.ClassName("c-select-city-desktop"));
 
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-            //var button = selection.FindElement(By.TagName("button"));
             var button = wait.Until(drv => drv.FindElement(By.TagName("button")));
             button.Click();
 

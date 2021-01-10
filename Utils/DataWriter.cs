@@ -6,7 +6,7 @@ using System.Text;
 using CsvHelper;
 using Microsoft.Win32;
 
-namespace DesctopAptekaHelper
+namespace AptekaHelper
 {
     public class DataWriter
     {
