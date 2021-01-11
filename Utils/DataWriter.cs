@@ -67,6 +67,13 @@ namespace AptekaHelper
             }
         }
 
+        public void SetDirectory(string directory)
+        {
+            _directory = directory;
+            if (!System.IO.Directory.Exists(_directory))
+                Directory.CreateDirectory(_directory);
+        }
+
         public string GetByteArray(IEnumerable<Apteka> values)
         {
             var memStream = new MemoryStream();
