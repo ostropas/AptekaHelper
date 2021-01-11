@@ -18,7 +18,8 @@ namespace AptekaHelper
             _parsers = new List<BaseSiteParser>()
             {
                 new AprilSiteParser(),
-                new VolgofarmSiteParser()
+                new VolgofarmSiteParser(),
+                new AsnaSiteParser()
             };
 
             var tabItems = _parsers.Select(x => new TabItem() { Header = x.Name, Name = x.Name }).ToList();

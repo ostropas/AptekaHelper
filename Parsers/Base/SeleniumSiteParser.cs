@@ -18,7 +18,9 @@ namespace AptekaHelper.Parsers
             ChromeOptions options = new ChromeOptions();
             options.AddArguments("--window-size=1920,1080");
             options.AddArguments("--start-maximized");
+#if !DEBUG
             options.AddArguments("--headless");
+#endif
 
             _webDriver = new ChromeDriver(options);
         }

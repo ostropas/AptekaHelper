@@ -25,9 +25,9 @@ namespace AptekaHelper.Parsers
 
         protected string GetAbsolutePath(string relPath) => $"{_siteUrl}/{relPath}";
 
-        public void WriteToFile(List<Apteka> result)
+        public void WriteToFile(List<Apteka> result, DataWriter dataWriterP = null)
         {
-            var dataWriter = new DataWriter();
+            var dataWriter = dataWriterP == null ? new DataWriter() : dataWriterP;
             dataWriter.Write($"{Name}_{_city}", result);
         }
 

@@ -13,7 +13,7 @@ namespace AptekaHelper.Parsers
 {
     public class AprilSiteParser : SeleniumLongSiteParser
     {
-        public override string Name => "Апрель";
+        public override string Name => "April";
 
         protected override string _siteUrl => "https://apteka-april.ru";
 
@@ -92,10 +92,6 @@ namespace AptekaHelper.Parsers
             {
                 var badge = driver.FindElement(By.ClassName("q-badge"));
                 driver.Navigate().GoToUrl(GetAbsolutePath("basket"));
-
-                driver.WaitCondition(ExpectedConditions.ElementExists(By.ClassName("no-basket-items")), 10);
-                if (driver.ElementExist(By.ClassName("no-basket-items")))
-                    return;
 
                 var selection = driver.FindElement(By.ClassName("c-basket-summary"), 10);
                 var li = selection.FindElements(By.TagName("li")).ElementAt(1);

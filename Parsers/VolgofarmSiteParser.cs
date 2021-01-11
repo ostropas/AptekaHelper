@@ -12,7 +12,7 @@ namespace AptekaHelper.Parsers
 {
     public class VolgofarmSiteParser : ClassicSiteParser
     {
-        public override string Name => "Волгофарм";
+        public override string Name => "Volgofarm";
 
         protected override string _siteUrl => "http://volgofarm.ru";
 

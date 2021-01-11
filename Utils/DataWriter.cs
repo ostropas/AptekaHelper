@@ -5,40 +5,65 @@ using System.IO;
 using System.Text;
 using CsvHelper;
 using Microsoft.Win32;
+using Ookii.Dialogs.Wpf;
 
 namespace AptekaHelper
 {
     public class DataWriter
     {
-        public void Write(string path, IEnumerable<Apteka> values)
+        public void Write(string fileName, IEnumerable<Apteka> values)
         {
-            var fullFileName = $"{path}_{DateTime.Now.ToLocalTime()}.csv";
+            var fullFileName = $"{fileName}_{DateTime.Now.ToLocalTime()}.csv";
             fullFileName = fullFileName.Replace(':', '_');
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+
+            if (_directorySelected)
             {
-                FileName = fullFileName,
-                DefaultExt = "csv",
-                AddExtension = true
-            };
-            if (saveFileDialog.ShowDialog() == true)
+                WriteToTargetPath(values, Path.Combine(_directory, fullFileName));
+            } else
             {
-                using (StreamWriter sw = new StreamWriter(saveFileDialog.FileName, false, Encoding.Unicode))
+                SaveFileDialog saveFileDialog = new SaveFileDialog
                 {
-                    var serializer = new CsvHelper.CsvSerializer(sw, CultureInfo.CurrentCulture);
-                    using (CsvWriter csvReader = new CsvWriter(serializer))
+                    FileName = fullFileName,
+                    DefaultExt = "csv",
+                    AddExtension = true
+                };
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    WriteToTargetPath(values, saveFileDialog.FileName);
+                }
+            }
+        }
+
+        private void WriteToTargetPath(IEnumerable<Apteka> values, string fileName)
+        {
+            using (StreamWriter sw = new StreamWriter(fileName, false, Encoding.Unicode))
+            {
+                var serializer = new CsvHelper.CsvSerializer(sw, CultureInfo.CurrentCulture);
+                using (CsvWriter csvReader = new CsvWriter(serializer))
+                {
+                    csvReader.Configuration.Delimiter = "\t";
+                    try
                     {
-                        csvReader.Configuration.Delimiter = "\t";
-                        try
-                        {
-                            csvReader.WriteRecords(values);
-                        }
-                        catch (Exception)
-                        {
-                            Console.WriteLine($"Please close {path} file");
-                            throw;
-                        }
+                        csvReader.WriteRecords(values);
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine($"Please close {fileName} file");
+                        throw;
                     }
                 }
+            }
+        }
+
+        private bool _directorySelected => !string.IsNullOrEmpty(_directory);
+        private string _directory;
+        public void SelectDirectory()
+        {
+            VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+            var res = dialog.ShowDialog();
+            if (res.HasValue && res.Value)
+            {
+                _directory = dialog.SelectedPath;
             }
         }
 
