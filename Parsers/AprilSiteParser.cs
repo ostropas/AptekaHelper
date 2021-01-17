@@ -1,11 +1,9 @@
 ﻿using AptekaHelper.Extensions;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -47,12 +45,20 @@ namespace AptekaHelper.Parsers
             input.SendKeys(data.Count.ToString());
             input.SendKeys(Keys.Enter);
 
-            driver.WaitCondition(drv => 
-            {
-                var selectionList = driver.FindElement(By.ClassName("product-list"));
-                var title = selectionList.FindElement(By.TagName("h1"));
-                return ExpectedConditions.TextToBePresentInElement(title, $"В корзине {data.Count} товаров");
-            }, 10);
+            var cartButton = driver.FindElement(By.ClassName("q-button"), 10);
+            driver.WaitToBeClickable(cartButton);
+
+            //var qBadge = driver.FindElement(By.ClassName("q-badge"), 10);
+
+            //Thread.Sleep(500);
+
+            //driver.WaitCondition(drv => 
+            //{
+            //    var text = qBadge.Text;
+            //    return ExpectedConditions.TextToBePresentInElement(qBadge, data.Count);
+            //}, 10);
+
+            //Thread.Sleep(500);
 
             driver.Navigate().GoToUrl(GetAbsolutePath("checkout"));
 
@@ -128,27 +134,42 @@ namespace AptekaHelper.Parsers
             enterButton.Click();
         }
 
-        protected override void SetCity(IWebDriver driver, string city)
+        protected override bool SetCity(IWebDriver driver, string city)
         {
-            var selection = driver.FindElement(By.ClassName("c-select-city-desktop"));
-
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-            var button = wait.Until(drv => drv.FindElement(By.TagName("button")));
-            driver.WaitToBeClickable(button);
-            button.Click();
-
-            var openedSelection = driver.FindElement(By.ClassName("opened"));
-            var inputCity = openedSelection.FindElement(By.TagName("input"));
-            inputCity.SendKeys(city);
-            driver.WaitCondition(drv =>
+            try
             {
-                var firstCity = openedSelection.FindElement(By.ClassName("name"));
-                return ExpectedConditions.TextToBePresentInElement(firstCity, city);
-            }, 10);
-            var cityElement = openedSelection.FindElement(By.ClassName("name"));
-            driver.WaitToBeClickable(cityElement);
-            cityElement.Click();
-            Thread.Sleep(1000);
+                var selection = driver.FindElement(By.ClassName("c-select-city-desktop"), 10);
+
+                var button = driver.FindElement(By.TagName("button"), 10);
+                driver.WaitToBeClickable(button);
+                button.Click();
+
+                Thread.Sleep(1000);
+                var openedSelection = driver.FindElement(By.ClassName("opened"), 10);
+                var inputCity = openedSelection.FindElement(By.TagName("input"));
+                inputCity.SendKeys(city);
+                driver.WaitCondition(drv =>
+                {
+                    var firstCity = openedSelection.FindElement(By.ClassName("name"));
+                    return ExpectedConditions.TextToBePresentInElement(firstCity, city);
+                }, 10);
+                Thread.Sleep(1000);
+                var cityElement = openedSelection.FindElement(By.ClassName("name"));
+                driver.WaitToBeClickable(cityElement);
+                cityElement.Click();
+                Thread.Sleep(1000);
+                var newCity = driver.FindElement(By.ClassName("c-select-city-desktop"), 10);
+                var text = newCity.Text;
+                if (text != city)
+                    throw new Exception("Incorrect city");
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
         }
     }
 }

@@ -80,10 +80,11 @@ namespace AptekaHelper.Parsers
             }
         }
 
-        protected override void SetCity(IWebDriver driver, string city)
+        protected override bool SetCity(IWebDriver driver, string city)
         {
             _correctedUrl = $"https://{city.ToLower().Unidecode()}.asna.ru".Replace("'", "");
             driver.Navigate().GoToUrl(_siteUrl);
+            return true;
         }
     }
 }

@@ -18,7 +18,11 @@ namespace AptekaHelper
             UpdateProgress(0);
             InitWebDriver();
             Login(_webDriver);
-            SetCity(_webDriver, _city);
+            int counter = 0;
+            while (!SetCity(_webDriver, _city)) {
+                if (++counter > 5)
+                    throw new Exception("Can't set sity");
+            }
             List<Apteka> result = new List<Apteka>();
             sw.Restart();
             for (int i = 0; i < _fileData.Count; i++)
@@ -36,7 +40,7 @@ namespace AptekaHelper
         }
 
         protected virtual void Login(IWebDriver driver) { }
-        protected abstract void SetCity(IWebDriver driver, string city);
+        protected abstract bool SetCity(IWebDriver driver, string city);
         protected abstract Task<List<Apteka>> AddProduct(IWebDriver driver, IdsData data);
         protected abstract void ClearBasket(IWebDriver driver);
     }

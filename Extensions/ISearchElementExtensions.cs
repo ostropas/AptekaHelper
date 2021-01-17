@@ -48,14 +48,14 @@ namespace AptekaHelper.Extensions
             }
         }
 
-        public static void WaitCondition<TResult>(this IWebDriver driver, Func<IWebDriver, TResult> condition, int timeoutInSeconds)
+        public static TResult WaitCondition<TResult>(this IWebDriver driver, Func<IWebDriver, TResult> condition, int timeoutInSeconds)
         {
-            new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds)).Until(condition);
+            return new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds)).Until(condition);
         }
 
-        public static void WaitToBeClickable(this IWebDriver driver, IWebElement element, int timeoutInSeconds = 10)
+        public static IWebElement WaitToBeClickable(this IWebDriver driver, IWebElement element, int timeoutInSeconds = 10)
         {
-            new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds)).Until(ExpectedConditions.ElementToBeClickable(element));
+            return new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds)).Until(ExpectedConditions.ElementToBeClickable(element));
         }
     }
 }
