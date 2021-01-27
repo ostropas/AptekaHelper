@@ -21,16 +21,26 @@ namespace AptekaHelper
             int counter = 0;
             while (!SetCity(_webDriver, _city)) {
                 if (++counter > 5)
-                    throw new Exception("Can't set sity");
+                {
+                    Logger.Logger.Log("Невозможно установить город");
+                    throw new Exception();
+                }
             }
             List<Apteka> result = new List<Apteka>();
             sw.Restart();
             for (int i = 0; i < _fileData.Count; i++)
             {
                 var data = _fileData[i];
-                ClearBasket(_webDriver);
-                var res = await AddProduct(_webDriver, data);
-                result.AddRange(res);
+                try
+                {
+                    ClearBasket(_webDriver);
+                    var res = await AddProduct(_webDriver, data);
+                    result.AddRange(res);
+                }
+                catch (Exception e)
+                {
+                    Logger.Logger.Log($"Не удается распознать товар: {data.ProductName}, позиция: {i}", e);
+                }
 
                 UpdateProgress((float)(i + 1) / _fileData.Count);
             }

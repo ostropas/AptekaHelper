@@ -1,7 +1,13 @@
-﻿using AptekaHelper.Parsers;
+﻿using AptekaHelper.Logger;
+using AptekaHelper.Parsers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Threading;
+using System.Deployment;
+using System.Reflection;
 
 namespace AptekaHelper
 {
@@ -30,25 +36,27 @@ namespace AptekaHelper
 
             for (int i = 0; i < _parsers.Count; i++)
             {
-                _openedPages.Add(i, new SitePage(_parsers[i], BlockElements));
+                _openedPages.Add(i, new SitePage(_parsers[i]));
             }
             PagesFrame.Navigate(_openedPages[0]);
             PagesFrame.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
+
+            Logger.Logger.Init(UpdateLog);
+
+            string version = Assembly.GetEntryAssembly().GetName().Version.ToString();
+            this.Title = $"AptekaHelper v:{version}";
         }
+
+        private void UpdateLog(Log log)
+        {
+            LogData.Items.Add(log);
+        }
+
 
         private void TabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             int selectIndex = Tabs.SelectedIndex;
             PagesFrame.Navigate(_openedPages[selectIndex]);
-        }
-
-        private void BlockElements(bool blocked)
-        {
-            foreach (var tab in Tabs.Items)
-            {
-                var t = tab as TabItem;
-                t.IsEnabled = !blocked;
-            }
         }
     }
 }

@@ -9,19 +9,26 @@ namespace AptekaHelper.Logger
 {
     public static class Logger
     {
-        private static TextWriter _w;
-        static Logger()
+        private static Action<Log> _logAction;
+        public static void Init(Action<Log> action)
         {
-            _w = File.AppendText("log.txt");
+            _logAction = action;
         }
 
-        public static void Log(string logMessage)
+        public static void Log(string logMessage, Exception e = null)
         {
-            _w.Write("\r\nLog Entry : ");
-            _w.WriteLine($"{DateTime.Now.ToLongTimeString()} {DateTime.Now.ToLongDateString()}");
-            _w.WriteLine("  :");
-            _w.WriteLine($"  :{logMessage}");
-            _w.WriteLine("-------------------------------");
+            var log = new Log()
+            {
+                Data = logMessage
+            };
+            if (e != null)
+                log.FullData = e.StackTrace;
+            _logAction.Invoke(log);
         }
+    }
+
+    public class Log {
+        public string Data { get; set; }
+        public string FullData { get; set; }
     }
 }
