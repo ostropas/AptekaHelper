@@ -68,12 +68,11 @@ namespace AptekaHelper
 
             //var dataWriter = new DataWriter();
             //dataWriter.SelectDirectory();
-
             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(async delegate ()
             {
                 foreach (var city in _cityFile)
                 {
-                    _parser.Init(_idsFile, city);
+                    _parser.Init(_idsFile, city, ShowBrowser.IsChecked.HasValue && ShowBrowser.IsChecked.Value);
                     var res = await _parser.ParseSite(_sw);
                     _parser.WriteToFile(res, _dataWriter);
                     _sw.Reset();

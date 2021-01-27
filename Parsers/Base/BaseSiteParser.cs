@@ -16,11 +16,13 @@ namespace AptekaHelper.Parsers
 
         protected List<IdsData> _fileData;
         protected string _city;
+        protected bool _showBrowser;
 
-        public void Init(List<string> file, string city)
+        public void Init(List<string> file, string city, bool showBrowser)
         {
             _fileData = file.Select(x => new IdsData(x)).ToList();
             _city = city;
+            _showBrowser = showBrowser;
         }
 
         protected string GetAbsolutePath(string relPath) => $"{_siteUrl}/{relPath}";

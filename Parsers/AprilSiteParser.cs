@@ -62,34 +62,41 @@ namespace AptekaHelper.Parsers
 
             driver.Navigate().GoToUrl(GetAbsolutePath("checkout"));
 
-            var pharmacies = driver.FindElements(By.ClassName("pharmacy"), 10);
-
-            List<Apteka> res = pharmacies.Select(x =>
+            try
             {
-                var pharmacyName = x.FindElement(By.ClassName("pharmacy-name"));
-                var address = pharmacyName.FindElements(By.TagName("span")).Last().Text;
-                var badge = x.FindElement(By.ClassName("badge")).Text;
+                var pharmacies = driver.FindElements(By.ClassName("pharmacy"), 10);
 
-                var countLeft = 0;
-
-                if (badge == "Все")
+                List<Apteka> res = pharmacies.Select(x =>
                 {
-                    countLeft = int.Parse(data.Count);
-                }
-                else if (badge == "Под заказ")
-                {
-                    countLeft = 0;
-                }
-                else
-                {
-                    countLeft = int.Parse(badge.Substring(0, 1));
-                }
+                    var pharmacyName = x.FindElement(By.ClassName("pharmacy-name"));
+                    var address = pharmacyName.FindElements(By.TagName("span")).Last().Text;
+                    var badge = x.FindElement(By.ClassName("badge")).Text;
 
-                return new Apteka(data.ProductName, "Апрель", address, countLeft.ToString());
-            }).ToList();
+                    var countLeft = 0;
+
+                    if (badge == "Все")
+                    {
+                        countLeft = int.Parse(data.Count);
+                    }
+                    else if (badge == "Под заказ")
+                    {
+                        countLeft = 0;
+                    }
+                    else
+                    {
+                        countLeft = int.Parse(badge.Substring(0, 1));
+                    }
+
+                    return new Apteka(data.ProductName, "Апрель", address, countLeft.ToString());
+                }).ToList();
 
 
-            return res;
+                return res;
+            } 
+            catch (Exception e)
+            {
+                return new List<Apteka>();
+            }
         }
 
         protected override void ClearBasket(IWebDriver driver)

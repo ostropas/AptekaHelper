@@ -14,5 +14,6 @@
         <!--<Button Content="Выбрать файл городов" Name="FileCityButton" HorizontalAlignment="Left" Margin="82,21,0,0" VerticalAlignment="Top" Width="235" Height="56" Click="FileCityButton_Click"/>-->
         <ProgressBar Name="Progress" HorizontalAlignment="Left" Height="28" VerticalAlignment="Top" Width="235" Margin="82,242,0,0"/>
         <Label Content="0" Name="ProgressText" HorizontalAlignment="Left" Margin="0,214,0,0" VerticalAlignment="Top" Height="28" Width="421"/>
+        <CheckBox Name="ShowBrowser" Content="Показывать браузер" HorizontalAlignment="Left" Margin="54,70,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Page>
