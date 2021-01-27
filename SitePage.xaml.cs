@@ -99,10 +99,8 @@ namespace AptekaHelper
             this.FileButton.Content = $"File:\"{configFileName}\"";
         }
 
-        private void ShowBrowser_Checked(object sender, RoutedEventArgs e)
-        {
-            var obj = (CheckBox)sender;
-            _showBrowser = obj.IsChecked.HasValue && obj.IsChecked.Value;
-        }
+        private void ShowBrowser_Checked(object sender, RoutedEventArgs e) => _showBrowser = true;
+
+        private void ShowBrowser_Unchecked(object sender, RoutedEventArgs e) => _showBrowser = false;
     }
 }
