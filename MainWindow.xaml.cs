@@ -1,12 +1,8 @@
 ﻿using AptekaHelper.Logger;
 using AptekaHelper.Parsers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Threading;
-using System.Deployment;
 using System.Reflection;
 
 namespace AptekaHelper
@@ -18,6 +14,7 @@ namespace AptekaHelper
     {
         private Dictionary<int, Page> _openedPages = new Dictionary<int, Page>();
         private List<BaseSiteParser> _parsers;
+        private const int _currentVersion = 1;
         public MainWindow()
         {
             InitializeComponent();
@@ -42,9 +39,7 @@ namespace AptekaHelper
             PagesFrame.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
 
             Logger.Logger.Init(UpdateLog);
-
-            string version = Assembly.GetEntryAssembly().GetName().Version.ToString();
-            this.Title = $"AptekaHelper v:{version}";
+            this.Title = $"AptekaHelper v:{ _currentVersion }";
         }
 
         private void UpdateLog(Log log)
