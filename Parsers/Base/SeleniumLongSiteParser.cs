@@ -40,8 +40,7 @@ namespace AptekaHelper
                 catch (Exception e)
                 {
                     Logger.Logger.Log($"Не удается распознать товар: {data.ProductName}, позиция: {i}", e);
-                    Screenshot ss = ((ITakesScreenshot)_webDriver).GetScreenshot();
-                    Logger.Logger.LogScreenShot(i, ss);
+                    Logger.Logger.LogScreenShot(i, _webDriver);
                 }                
                 UpdateProgress((float)(i + 1) / _fileData.Count);
             }

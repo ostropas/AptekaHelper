@@ -1,10 +1,16 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Support.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WDSE;
+using WDSE.Decorators;
+using WDSE.ScreenshotMaker;
 
 namespace AptekaHelper.Logger
 {
@@ -35,13 +41,18 @@ namespace AptekaHelper.Logger
             _logAction.Invoke(log);
         }
 
-        public static void LogScreenShot(int pos, Screenshot ss)
+        public static void LogScreenShot(int pos, IWebDriver driver)
         {
+            var vcs = new VerticalCombineDecorator(new ScreenshotMaker());
+            var screen = driver.TakeScreenshot(vcs);
             var time = DateTime.Now.ToLocalTime().ToString();
             time = time.Replace(':', '_');
             var finalPath = Path.Combine(_path, $"{pos}_{time}_Image.png");
-            ss.SaveAsFile(finalPath,
-            ScreenshotImageFormat.Png);
+
+            using (Image image = Image.FromStream(new MemoryStream(screen)))
+            {
+                image.Save(finalPath, ImageFormat.Png);
+            }
         }
     }
 
