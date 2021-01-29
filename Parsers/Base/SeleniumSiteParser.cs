@@ -30,6 +30,9 @@ namespace AptekaHelper.Parsers
             ChromeOptions options = new ChromeOptions();
             options.AddArguments("--window-size=1920,1080");
             options.AddArguments("--start-maximized");
+            options.AddArguments("--disable-web-security");
+            options.AddArguments("--disable-javascript");
+            options.AddAdditionalCapability("useAutomationExtension", false);
             if (!_showBrowser)
                 options.AddArguments("--headless");
 

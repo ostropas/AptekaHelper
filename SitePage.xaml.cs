@@ -96,6 +96,7 @@ namespace AptekaHelper
             _idsFile = ReadFileData(Path.Combine(configFileDirectory, idsFile));
             _cityFile = ReadFileData(Path.Combine(configFileDirectory, cityFile));
             _dataWriter.SetDirectory(Path.Combine(configFileDirectory, outPutDir));
+            Logger.Logger.SetLogPath(Path.Combine(configFileDirectory, outPutDir, "Logs"));
             this.FileButton.Content = $"File:\"{configFileName}\"";
         }
 
