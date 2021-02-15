@@ -31,6 +31,7 @@ namespace AptekaHelper.Parsers
 
             var selection = driver.FindElement(By.ClassName("buy"));
             var buyButton = selection.FindElement(By.TagName("button"));
+            driver.WaitToBeClickable(buyButton);
             buyButton.Click();
 
             driver.WaitElement(By.ClassName("quantity"), 10);
