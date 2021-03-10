@@ -27,8 +27,8 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>12</ApplicationRevision>
-    <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
+    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationVersion>1.2.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -178,11 +178,11 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="packages\Selenium.WebDriver.ChromeDriver.87.0.4280.8800\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('packages\Selenium.WebDriver.ChromeDriver.87.0.4280.8800\build\Selenium.WebDriver.ChromeDriver.targets')" />
+  <Import Project="packages\Selenium.WebDriver.ChromeDriver.89.0.4389.2300\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('packages\Selenium.WebDriver.ChromeDriver.89.0.4389.2300\build\Selenium.WebDriver.ChromeDriver.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('packages\Selenium.WebDriver.ChromeDriver.87.0.4280.8800\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Selenium.WebDriver.ChromeDriver.87.0.4280.8800\build\Selenium.WebDriver.ChromeDriver.targets'))" />
+    <Error Condition="!Exists('packages\Selenium.WebDriver.ChromeDriver.89.0.4389.2300\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Selenium.WebDriver.ChromeDriver.89.0.4389.2300\build\Selenium.WebDriver.ChromeDriver.targets'))" />
   </Target>
 </Project>
