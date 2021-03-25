@@ -49,5 +49,12 @@ namespace AptekaHelper.Parsers
             if (_webDriver != null)
                 _webDriver.Quit();
         }
+
+        protected T BrowserGetRequest<T>(string path)
+        {
+            _webDriver.Navigate().GoToUrl($"{_siteUrl}{path}");
+            var data = _webDriver.FindElement(By.TagName("body")).Text;
+           return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(data);
+        }
     }
 }

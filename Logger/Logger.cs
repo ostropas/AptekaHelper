@@ -8,9 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WDSE;
-using WDSE.Decorators;
-using WDSE.ScreenshotMaker;
 
 namespace AptekaHelper.Logger
 {
@@ -43,16 +40,6 @@ namespace AptekaHelper.Logger
 
         public static void LogScreenShot(int pos, IWebDriver driver)
         {
-            var vcs = new VerticalCombineDecorator(new ScreenshotMaker());
-            var screen = driver.TakeScreenshot(vcs);
-            var time = DateTime.Now.ToLocalTime().ToString();
-            time = time.Replace(':', '_');
-            var finalPath = Path.Combine(_path, $"{pos}_{time}_Image.png");
-
-            using (Image image = Image.FromStream(new MemoryStream(screen)))
-            {
-                image.Save(finalPath, ImageFormat.Png);
-            }
         }
     }
 
