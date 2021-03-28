@@ -14,7 +14,7 @@ namespace AptekaHelper
     {
         private Dictionary<int, Page> _openedPages = new Dictionary<int, Page>();
         private List<BaseSiteParser> _parsers;
-        private const int _currentVersion = 5;
+        private const int _currentVersion = 6;
         public MainWindow()
         {
             InitializeComponent();
