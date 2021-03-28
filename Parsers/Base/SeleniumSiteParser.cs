@@ -33,8 +33,7 @@ namespace AptekaHelper.Parsers
             options.AddArguments("--disable-web-security");
             options.AddArguments("--disable-javascript");
             options.AddAdditionalCapability("useAutomationExtension", false);
-            if (!_showBrowser)
-                options.AddArguments("--headless");
+            options.AddArguments("--headless");
 
             _webDriver = new ChromeDriver(options);
         }

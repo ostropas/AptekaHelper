@@ -9,7 +9,7 @@ namespace AptekaHelper.Parsers
 {
     public class AsnaSiteParser : ClassicSiteParser
     {
-        public override string Name => "Asna";
+        public override string Name => "Асна";
 
         protected override string _siteUrl => "https://www.asna.ru/api/v1.0";
         private (string, string) _authToken;
@@ -31,11 +31,19 @@ namespace AptekaHelper.Parsers
             var productResponse = await GetRequest<ProductResponse>($"https://www.asna.ru/api/v1.0/prices/?region={cityId.Item1}&city={cityId.Item2}&product[{data.Id}]={data.Count}",
                 true, 
                 _authToken);
-            
-            return productResponse.data.Where(p => _pharmacies.ContainsKey(p.attributes.pharmacie)).Select(x => new Apteka(data.ProductName,
-                _pharmacies[x.attributes.pharmacie].name,
+
+            var res = productResponse.data.Where(p => _pharmacies.ContainsKey(p.attributes.pharmacie)).Select(x => new Apteka(data.ProductName,
                 _pharmacies[x.attributes.pharmacie].address,
-                x.attributes.offers[0].quantity.count.ToString())).ToList();
+                _pharmacies[x.attributes.pharmacie].address,
+                x.attributes.offers[0].quantity.count.ToString(),
+                "Асна", data.Id)).ToList();
+
+            if (res.Count == 0)
+            {
+                throw new Exception();
+            }
+
+            return res;
         }
 
         protected override async Task PrepareInits()

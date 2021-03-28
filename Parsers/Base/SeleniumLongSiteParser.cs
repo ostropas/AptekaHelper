@@ -13,7 +13,7 @@ namespace AptekaHelper
 {
     public abstract class SeleniumLongSiteParser : SeleniumSiteParser
     {
-        public override async Task<List<Apteka>> ParseSite(Stopwatch sw)
+        public override async Task<List<Apteka>> ParseSite()
         {
             UpdateProgress(0);
             InitWebDriver();
@@ -27,7 +27,6 @@ namespace AptekaHelper
                 }
             }
             List<Apteka> result = new List<Apteka>();
-            sw.Restart();
             for (int i = 0; i < _fileData.Count; i++)
             {
                 var data = _fileData[i];
@@ -39,7 +38,7 @@ namespace AptekaHelper
                 }
                 catch (Exception e)
                 {
-                    Logger.Logger.Log($"Не удается распознать товар: {data.ProductName}, позиция: {i}", e);
+                    Logger.Logger.Log($"Не удается распознать товар: {data.ProductName}, id: {data.Id}, сеть: {Name}, город:{_city}", e);
                     Logger.Logger.LogScreenShot(i, _webDriver);
                 }                
                 UpdateProgress((float)(i + 1) / _fileData.Count);

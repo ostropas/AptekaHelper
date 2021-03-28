@@ -23,8 +23,6 @@ namespace AptekaHelper.Logger
         public static void SetLogPath(string path)
         {
             _path = path;
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
         }
 
         public static void Log(string logMessage, Exception e = null)
@@ -35,7 +33,12 @@ namespace AptekaHelper.Logger
             };
             if (e != null)
                 log.FullData = e.StackTrace;
-            _logAction.Invoke(log);
+            using (var writer = File.AppendText(_path))
+            {
+                writer.WriteLine($"{DateTime.Now} - {log.Data}");
+            }
+
+            _logAction?.Invoke(log);
         }
 
         public static void LogScreenShot(int pos, IWebDriver driver)

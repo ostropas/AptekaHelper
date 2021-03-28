@@ -6,15 +6,12 @@
         xmlns:local="clr-namespace:AptekaHelper"
         mc:Ignorable="d"
         ResizeMode="NoResize"
-        Title="Apteka Helper" Height="564.8" Width="270">
+        Title="Apteka Helper" Height="277.415" Width="620">
     <Grid>
-        <TabControl Name="Tabs" HorizontalAlignment="Left" Height="230" VerticalAlignment="Top" Width="264" SelectionChanged="TabControl_SelectionChanged"/>
-        <Frame Name="PagesFrame" HorizontalAlignment="Left" Height="230" VerticalAlignment="Top" Width="264" Margin="0,24,0,0"/>
-        <DataGrid Name="LogData" HorizontalAlignment="Left" Height="290" Margin="10,235,0,0" VerticalAlignment="Top" Width="244">
-          <DataGrid.Columns>
-            <DataGridTextColumn Header="Log" IsReadOnly="True" Binding="{Binding Path=Data}" Width="400"></DataGridTextColumn>
-            <DataGridTextColumn Header="Error" IsReadOnly="True" Binding="{Binding Path=FullData}" Width="400"></DataGridTextColumn>
-          </DataGrid.Columns>
-        </DataGrid>
+        <Button Name="FileButton" Content="Выбрать файл конфигурации" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="594" Height="57" Click="FileButton_Click"/>
+        <ProgressBar Name="Progress" HorizontalAlignment="Left" Height="81" VerticalAlignment="Top" Width="594" Margin="10,90,0,0"/>
+        <Label Content="0" Panel.ZIndex="1" Name="ProgressText" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" Height="28" Width="100"
+               Margin="254,119,259.6,0"/>
+        <Button x:Name="ParseButton" Content="Начать парсинг" HorizontalAlignment="Left" Margin="10,181,0,0" VerticalAlignment="Top" Width="594" Height="57" Click="ParseButton_Click"/>
     </Grid>
 </Window>

@@ -11,7 +11,7 @@ namespace AptekaHelper.Parsers
 {
     public class AprilSiteParser : SeleniumLongSiteParser
     {
-        public override string Name => "April";
+        public override string Name => "Апрель";
 
         protected override string _siteUrl => "https://api.apteka-april.ru";
         
@@ -37,7 +37,7 @@ namespace AptekaHelper.Parsers
         {
             var cityId = _citiesDistricts[_city];
             var pharmacies = BrowserGetRequest<List<Product>>($"/pharmacies/stock?productID={{{data.Id}}}&districtID={cityId}");
-            return pharmacies.Select(x => new Apteka(data.ProductName, "Аптека апрель", _pharmacies[x.pharmacyID].address, x.count.ToString())).ToList();
+            return pharmacies.Select(x => new Apteka(data.ProductName, _pharmacies[x.pharmacyID].address, _pharmacies[x.pharmacyID].address, x.count.ToString(), "Апрель", x.productID.ToString())).ToList();
         }
 
         protected override void ClearBasket(IWebDriver driver)

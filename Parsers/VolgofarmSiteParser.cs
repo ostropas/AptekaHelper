@@ -12,7 +12,7 @@ namespace AptekaHelper.Parsers
 {
     public class VolgofarmSiteParser : ClassicSiteParser
     {
-        public override string Name => "Volgofarm";
+        public override string Name => "Волгофарм";
 
         protected override string _siteUrl => "http://volgofarm.ru";
 
@@ -31,10 +31,17 @@ namespace AptekaHelper.Parsers
                     res = await result.Content.ReadAsStringAsync();
                 }
             }
-            return Parse(res, data.ProductName);
+            var resData = Parse(res, data.ProductName, data.Id);
+
+            var allDataIsZero = resData.All(x => x.Count == "0");
+            if (allDataIsZero)
+            {
+                throw new Exception();
+            }
+            return resData;
         }
 
-        private List<Apteka> Parse(string sitePage, string productTitle)
+        private List<Apteka> Parse(string sitePage, string productTitle, string productID)
         {
             var content = new List<Apteka>();
 
@@ -56,7 +63,7 @@ namespace AptekaHelper.Parsers
                 if (string.IsNullOrEmpty(count))
                     count = "0";
 
-                content.Add(new Apteka(productTitle, titles[i], address, count));
+                content.Add(new Apteka(productTitle, titles[i], address, count, "Волгофарм", productID));
             }
 
             return content;

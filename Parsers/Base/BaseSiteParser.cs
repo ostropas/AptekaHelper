@@ -8,20 +8,18 @@ namespace AptekaHelper.Parsers
 {
     public abstract class BaseSiteParser
     {
-        public abstract Task<List<Apteka>> ParseSite(Stopwatch sw);
+        public abstract Task<List<Apteka>> ParseSite();
         public abstract string Name { get; }
         public event Action<float> ProgressUpdated;
         protected abstract string _siteUrl { get; }
 
         protected List<IdsData> _fileData;
         protected string _city;
-        protected bool _showBrowser;
 
-        public void Init(List<string> file, string city, bool showBrowser)
+        public void Init(List<IdsData> file, string city)
         {
-            _fileData = file.Select(x => new IdsData(x)).ToList();
+            _fileData = file;
             _city = city;
-            _showBrowser = showBrowser;
         }
 
         protected string GetAbsolutePath(string relPath) => $"{_siteUrl}/{relPath}";

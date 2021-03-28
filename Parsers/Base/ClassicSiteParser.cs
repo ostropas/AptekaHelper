@@ -13,24 +13,23 @@ namespace AptekaHelper.Parsers
 {
     public abstract class ClassicSiteParser : BaseSiteParser
     {
-        public override async Task<List<Apteka>> ParseSite(Stopwatch sw)
+        public override async Task<List<Apteka>> ParseSite()
         {
             await PrepareInits();
             UpdateProgress(0);
             List<Apteka> result = new List<Apteka>();
-            List<Task<List<Apteka>>> tasks = new List<Task<List<Apteka>>>();
-            foreach (var data in _fileData)
+            foreach (var (data, index) in _fileData.Select((x, i) => (x, i)))
             {
-                var task = new Task<List<Apteka>>(() => AddProduct(new IdsData(data)).Result);
-                tasks.Add(task);
-                task.Start();
-            }
-
-            var results = await Task.WhenAll(tasks);
-
-            foreach (var item in results)
-            {
-                result.AddRange(item);
+                try
+                {
+                    var rnd = new Random();
+                    result.AddRange(await AddProduct(new IdsData(data)));
+                    UpdateProgress((float)(index + 1) / _fileData.Count);
+                }
+                catch (Exception e)
+                {
+                    Logger.Logger.Log($"Не удается распознать товар: {data.ProductName}, id: {data.Id} сеть: {Name}, город: {_city}", e);
+                }
             }
 
             UpdateProgress(1);
