@@ -10,8 +10,10 @@ namespace AptekaHelper
         [Name("Аптека")] public string Name { get; set; }
         [Name("Адрес")] public string Address { get; set; }
         [Name("Количество")] public string Count { get; set; }
+        [Name("Город")] public string City { get; set; }
 
-        public Apteka(string productName, string name, string address, string count, string net, string id)
+        public Apteka(string productName, string name, string address, string count,
+            string net, string id, string city)
         {
             ProductName = productName;
             Address = address;
@@ -19,6 +21,7 @@ namespace AptekaHelper
             Count = count;
             Net = net;
             Id = id;
+            City = city;
         }
 
         public override string ToString()

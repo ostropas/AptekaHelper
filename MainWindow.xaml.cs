@@ -17,7 +17,7 @@ namespace AptekaHelper
     /// </summary>
     public partial class MainWindow
     {
-        private const int _currentVersion = 7;
+        private const int _currentVersion = 8;
         private Config _config;
         private string _configPath;
 
@@ -99,6 +99,7 @@ namespace AptekaHelper
 
             foreach (var parser in _config.Parsers)
             {
+                await parser.SiteParser.CommonInit();
                 foreach (var _city in parser.Cities)
                 {
                     parser.SiteParser.Init(parser.Ids, _city);

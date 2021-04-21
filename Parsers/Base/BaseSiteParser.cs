@@ -8,6 +8,10 @@ namespace AptekaHelper.Parsers
 {
     public abstract class BaseSiteParser
     {
+        public virtual async Task CommonInit()
+        {
+        }
+
         public abstract Task<List<Apteka>> ParseSite();
         public abstract string Name { get; }
         public event Action<float> ProgressUpdated;

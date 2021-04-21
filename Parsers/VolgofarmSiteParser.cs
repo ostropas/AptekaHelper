@@ -63,7 +63,7 @@ namespace AptekaHelper.Parsers
                 if (string.IsNullOrEmpty(count))
                     count = "0";
 
-                content.Add(new Apteka(productTitle, titles[i], address, count, "Волгофарм", productID));
+                content.Add(new Apteka(productTitle, titles[i], address, count, "Волгофарм", productID, _city));
             }
 
             return content;

@@ -15,7 +15,14 @@ namespace AptekaHelper.Parsers
     {
         public override async Task<List<Apteka>> ParseSite()
         {
-            await PrepareInits();
+            try
+            {
+                await PrepareInits();
+            }
+            catch (Exception e)
+            {
+                Logger.Logger.Log($"Не удается настроить парсер: сеть: {Name}, город: {_city}", e);
+            }
             UpdateProgress(0);
             List<Apteka> result = new List<Apteka>();
             foreach (var (data, index) in _fileData.Select((x, i) => (x, i)))

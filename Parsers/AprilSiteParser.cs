@@ -37,7 +37,13 @@ namespace AptekaHelper.Parsers
         {
             var cityId = _citiesDistricts[_city];
             var pharmacies = BrowserGetRequest<List<Product>>($"/pharmacies/stock?productID={{{data.Id}}}&districtID={cityId}");
-            return pharmacies.Select(x => new Apteka(data.ProductName, _pharmacies[x.pharmacyID].address, _pharmacies[x.pharmacyID].address, x.count.ToString(), "Апрель", x.productID.ToString())).ToList();
+            return pharmacies.Select(x => new Apteka(data.ProductName,
+                _pharmacies[x.pharmacyID].address,
+                _pharmacies[x.pharmacyID].address,
+                x.count.ToString(),
+                "Апрель",
+                x.productID.ToString(),
+                _city)).ToList();
         }
 
         protected override void ClearBasket(IWebDriver driver)
