@@ -17,7 +17,7 @@ namespace AptekaHelper
     /// </summary>
     public partial class MainWindow
     {
-        private const int _currentVersion = 8;
+        private const int _currentVersion = 9;
         private Config _config;
         private string _configPath;
 
